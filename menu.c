@@ -16,7 +16,7 @@ static int _win;
 void _keyboardFunc(unsigned char key, int x, int y);
 void _specialFunc(int key, int x, int y);
 void _displayFunc(void);
-void _resizeFunc(void);
+void _reshapeFunc(void);
 void _emptyFunc(void){};
 
 int systemOpen(char* windowName, int* argc, char** argv){
@@ -36,6 +36,7 @@ node_t* systemInit(char* menuPath, void (*uHandler)(char*)){
 		glutKeyboardFunc(_keyboardFunc);
 		glutSpecialFunc(_specialFunc);
 		glutDisplayFunc(_displayFunc);
+		glutReshapeFunc(_reshapeFunc);
 		return menu;
 	}
 	return NULL;
