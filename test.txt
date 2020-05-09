@@ -1,0 +1,22 @@
+WindowBegin
+	ButtonBegin
+		Name = 1
+	ButtonEnd
+	ButtonBegin
+		Name = whatever
+	ButtonEnd
+	WindowBegin
+		Name = windy
+		ButtonBegin
+			Name = 2
+		ButtonEnd
+	WindowEnd
+	Name = mainy but windy
+	ButtonBegin
+		Name = fourthbutton
+	ButtonEnd
+WindowEnd
+Name = Main
+ButtonBegin
+	Name = The Action
+ButtonEnd
