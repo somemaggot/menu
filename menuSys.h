@@ -1,5 +1,5 @@
 #pragma once
-#include "tree.h"
+#include "menuStruct.h"
 
 int systemOpen(char* windowName, int* argc, char** argv);
 
