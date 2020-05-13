@@ -4,8 +4,8 @@
 #include <GL/glut.h>
 #endif
 
-#include "menu.h"
-#include "tree.h"
+#include "menuSys.h"
+#include "menuStruct.h"
 #include <stdio.h>
 
 static node_t* menu = NULL;
