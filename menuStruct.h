@@ -10,3 +10,5 @@ typedef struct Node{
 
 node_t* menuCreate(char* menuPath);
 void menuDestroy(node_t* menu);
+void menuDisplay(node_t* menu, int node_ind);
+char* menuUpdate(node_t** menu, int node_ind);

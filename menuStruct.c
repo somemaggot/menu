@@ -4,6 +4,12 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 int _match(char* str, char* substr){
 	int i = 0;
 	int retval = 1;
@@ -17,6 +23,84 @@ int _match(char* str, char* substr){
 		retval = 0;
 	}
 	return retval;
+}
+
+void menuDisplay(node_t* menu, int node_ind){
+	int i, j;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+	gluOrtho2D(0, 29, 0, 29);
+	//------------1--------------
+	glBegin(GL_QUADS);
+	  if (node_ind == 0){
+		glColor3d(1.0, 0.0, 0.0);
+	  } else {
+		glColor3d(1.0, 1.0, 1.0);
+	  }
+	  glVertex2f(28.0, 28.0);
+	  glVertex2f(1.0, 28.0);
+	  glVertex2f(1.0, 21.0);
+	  glVertex2f(28.0, 21.0);
+	  //--------------2----------------
+	  if (node_ind != 0 && (node_ind != (menu->width - 1) || menu->width == 2)){
+		  glColor3d(1.0, 0.0, 0.0);
+	  } else {
+		  glColor3d(1.0, 1.0, 1.0);
+	  }
+	  if (menu->width >= 2){
+		  glVertex2f(28.0, 18.0);
+		  glVertex2f(1.0, 18.0);
+		  glVertex2f(1.0, 11.0);
+		  glVertex2f(28.0, 11.0);
+	  }//------------------3-------------------
+	  if (menu->width >= 3){
+		  if (node_ind == (menu->width - 1)){
+			  glColor3d(1.0, 0.0, 0.0);
+		  } else {
+			  glColor3d(1.0, 1.0, 1.0);
+		  }
+		  glVertex2f(28.0, 8.0);
+		  glVertex2f(1.0, 8.0);
+		  glVertex2f(1.0, 1.0);
+		  glVertex2f(28.0, 1.0);
+	  }
+	glEnd();
+	//-------------------1--------------------
+	glColor3d(0.0, 0.0, 0.0);
+	if (node_ind == 0){
+		i = 1;
+		glColor3d(1.0, 1.0, 1.0);
+	} else if (node_ind == (menu->width - 1) && menu->width >= 3){
+		i = node_ind - 1;
+	} else {
+		i = node_ind;
+	}
+	glRasterPos2f(3.0, 24.0);
+	for (j = 0; menu->next[i - 1]->name[j]; j++){
+		glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i - 1]->name[j]);
+	}//--------------------------2----------------------
+	glColor3d(0.0, 0.0, 0.0);
+	if (menu->width >= 2){
+		if ((node_ind < menu->width - 1 && node_ind > 0) || (node_ind == menu->width - 1 && menu->width == 2)){
+			glColor3d(1.0, 1.0, 1.0);
+		}
+		glRasterPos2f(3.0, 14.0);
+		for (j = 0; menu->next[i]->name[j]; j++){
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i]->name[j]);
+		}//----------------------3---------------------
+		if (menu->width >= 3){
+			if (node_ind == menu->width - 1){
+				glColor3d(1.0, 1.0, 1.0);
+			} else {
+				glColor3d(0.0, 0.0, 0.0);
+			}
+			glRasterPos2f(3.0, 4.0);
+			for (j = 0; menu->next[i + 1]->name[j]; j++){
+				glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i + 1]->name[j]);
+			}
+		}
+	}
+	glutSwapBuffers();
 }
 
 node_t* menuCreate(char* menuPath){
@@ -152,6 +236,14 @@ node_t* menuCreate(char* menuPath){
 	} else {
 		return NULL;
 	}
+}
+
+char* menuUpdate(node_t** menu, int node_ind){
+	char* retval = (*menu)->next[node_ind]->name;
+	if ((*menu)->next[node_ind]->width){
+		(*menu) = (*menu)->next[node_ind];
+	}
+	return retval;
 }
 
 void menuDestroy(node_t* menu){

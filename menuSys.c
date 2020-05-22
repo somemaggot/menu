@@ -15,8 +15,8 @@ static int _win;
 
 void _keyboardFunc(unsigned char key, int x, int y);
 void _specialFunc(int key, int x, int y);
+void _reshapeFunc(int w, int h);
 void _displayFunc(void);
-void _reshapeFunc(void);
 void _emptyFunc(void){};
 
 int systemOpen(char* windowName, int* argc, char** argv){
@@ -53,83 +53,6 @@ void systemRelease(void){
 	}
 };
 
-void _displayFunc(void){
-	int i, j;
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-	gluOrtho2D(0, 29, 0, 29);
-	//------------1--------------
-	glBegin(GL_QUADS);
-	  if (node_ind == 0){
-		glColor3d(1.0, 0.0, 0.0);
-	  } else {
-		glColor3d(1.0, 1.0, 1.0);
-	  }
-	  glVertex2f(28.0, 28.0);
-	  glVertex2f(1.0, 28.0);
-	  glVertex2f(1.0, 21.0);
-	  glVertex2f(28.0, 21.0);
-	  //--------------2----------------
-	  if (node_ind != 0 && (node_ind != (menu->width - 1) || menu->width == 2)){
-		  glColor3d(1.0, 0.0, 0.0);
-	  } else {
-		  glColor3d(1.0, 1.0, 1.0);
-	  }
-	  if (menu->width >= 2){
-		  glVertex2f(28.0, 18.0);
-		  glVertex2f(1.0, 18.0);
-		  glVertex2f(1.0, 11.0);
-		  glVertex2f(28.0, 11.0);
-	  }//------------------3-------------------
-	  if (menu->width >= 3){
-		  if (node_ind == (menu->width - 1)){
-			  glColor3d(1.0, 0.0, 0.0);
-		  } else {
-			  glColor3d(1.0, 1.0, 1.0);
-		  }
-		  glVertex2f(28.0, 8.0);
-		  glVertex2f(1.0, 8.0);
-		  glVertex2f(1.0, 1.0);
-		  glVertex2f(28.0, 1.0);
-	  }
-	glEnd();
-	//-------------------1--------------------
-	glColor3d(0.0, 0.0, 0.0);
-	if (node_ind == 0){
-		i = 1;
-		glColor3d(1.0, 1.0, 1.0);
-	} else if (node_ind == (menu->width - 1) && menu->width >= 3){
-		i = node_ind - 1;
-	} else {
-		i = node_ind;
-	}
-	glRasterPos2f(3.0, 24.0);
-	for (j = 0; menu->next[i - 1]->name[j]; j++){
-		glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i - 1]->name[j]);
-	}//--------------------------2----------------------
-	glColor3d(0.0, 0.0, 0.0);
-	if (menu->width >= 2){
-		if ((node_ind < menu->width - 1 && node_ind > 0) || (node_ind == menu->width - 1 && menu->width == 2)){
-			glColor3d(1.0, 1.0, 1.0);
-		}
-		glRasterPos2f(3.0, 14.0);
-		for (j = 0; menu->next[i]->name[j]; j++){
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i]->name[j]);
-		}//----------------------3---------------------
-		if (menu->width >= 3){
-			if (node_ind == menu->width - 1){
-				glColor3d(1.0, 1.0, 1.0);
-			} else {
-				glColor3d(0.0, 0.0, 0.0);
-			}
-			glRasterPos2f(3.0, 4.0);
-			for (j = 0; menu->next[i + 1]->name[j]; j++){
-				glutBitmapCharacter(GLUT_BITMAP_8_BY_13, menu->next[i + 1]->name[j]);
-			}
-		}
-	}
-	glutSwapBuffers();
-}
 
 void _reshapeFunc(int w, int h){
 	glViewport(0, 0, w, h);
@@ -159,12 +82,11 @@ void _specialFunc(int key, int x, int y){
 }
 
 void _keyboardFunc(unsigned char key, int x, int y){
+	node_t* temp = menu;
 	switch (key){
 		case 13:
-			if (menu->next[node_ind]->width == 0){
-				(*_handler)(menu->next[node_ind]->name);
-			} else {
-				menu = menu->next[node_ind];
+			(*_handler)(menuUpdate(&menu, node_ind));
+			if (temp != menu){
 				node_ind = 0;
 			}
 			break;
@@ -180,4 +102,8 @@ void _keyboardFunc(unsigned char key, int x, int y){
 			break;
 	}
 	glutPostRedisplay();
+}
+
+void _displayFunc(void){
+	menuDisplay(menu, node_ind);
 }
